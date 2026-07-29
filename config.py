@@ -6,11 +6,12 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'roadscan-secret-key-ganti-ini'
     
     # Database
-    MYSQL_HOST     = 'localhost'
+    MYSQL_HOST     = 'mysql.railway.internal'
     MYSQL_USER     = 'root'
-    MYSQL_PASSWORD = ''          # sesuaikan password MySQL
-    MYSQL_DB       = 'roaddetection'
-    SQLALCHEMY_DATABASE_URI = f'mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}/{MYSQL_DB}'
+    MYSQL_PASSWORD = 'iDyxpWTHzkNzDAfEbEDjXDocPkPTvXOn'          # sesuaikan password MySQL
+    MYSQL_DB       = 'railway'
+    MYSQL_PORT     = 3306
+    SQLALCHEMY_DATABASE_URI = f'mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DB}'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # Upload
