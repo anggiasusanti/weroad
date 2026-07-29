@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Admin — WeRoad</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/dashboard.css') }}" />
+</head>
+<body>
+  <nav class="navbar">
+    <a href="{{ url_for('landing') }}" class="nav-logo">
+      <div class="logo-icon"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" onerror="this.parentElement.textContent='🛣️'" /></div>
+      WeRoad
+      <span class="admin-badge">ADMIN</span>
+    </a>
+    <div class="nav-right">
+      <div class="nav-admin">
+        <div class="nav-avatar admin">🛡️</div>
+        Administrator
+      </div>
+      <a href="{{ url_for('admin_logout') }}" class="btn btn-ghost btn-sm">Keluar</a>
+    </div>
+  </nav>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-section">Menu</div>
+      <a href="{{ url_for('admin_dashboard') }}" class="sidebar-item active"><span class="s-icon">📊</span> Dashboard</a>
+      <a href="{{ url_for('admin_data_deteksi') }}" class="sidebar-item"><span class="s-icon">🗂️</span> Data Klasifikasi</a>
+      <a href="{{ url_for('admin_manajemen_user') }}" class="sidebar-item"><span class="s-icon">👥</span> Manajemen User</a>
+    </aside>
+
+    <div class="admin-content">
+      <div class="page-header">
+        <h1>Dashboard</h1>
+        <p>Selamat datang, Administrator. Berikut ringkasan data sistem.</p>
+      </div>
+
+      <div class="stats-grid col-4">
+        <div class="stat-card"><div class="s-icon">👥</div><div class="num">{{ total_user }}</div><div class="lbl">Total User</div><div class="trend trend-up">↑ {{ user_baru }} User baru tahun ini</div></div>
+        <div class="stat-card"><div class="s-icon">🔍</div><div class="num">{{ total_deteksi }}</div><div class="lbl">Total Klasifikasi</div><div class="trend trend-up">↑ {{ deteksi_tahun }} Total klasifikasi tahun ini</div></div>
+        <div class="stat-card"><div class="s-icon">📷</div><div class="num">{{ total_foto }}</div><div class="lbl">Total Foto</div><div class="trend trend-up">↑ Foto tersimpan di server tahun ini</div></div>
+        <div class="stat-card"><div class="s-icon">🏆</div><div class="num" style="font-size:14px; margin-top:4px;">{{ kerusakan_terbanyak or '-' }}</div><div class="lbl">Kerusakan terbanyak</div><div class="trend trend-warn">{{ persen_terbanyak }}% dari semua deteksi tahun ini</div></div>
+      </div>
+
+      <div class="charts-row">
+        <div class="chart-card">
+          <h3>Klasifikasi per-Jenis Kerusakan Jalan Raya</h3>
+          <div class="bar-chart">
+            <div class="bar-row">
+              <div class="bar-label">Berlubang</div>
+              <div class="bar-track"><div class="bar-fill-chart" style="width:{{ persen_lubang }}%; background:#E24B4A;"></div></div>
+              <div class="bar-val">{{ jumlah_lubang }}</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">Retak Kulit Buaya</div>
+              <div class="bar-track"><div class="bar-fill-chart" style="width:{{ persen_buaya }}%; background:#BA7517;"></div></div>
+              <div class="bar-val">{{ jumlah_buaya }}</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">Retak Memanjang</div>
+              <div class="bar-track"><div class="bar-fill-chart" style="width:{{ persen_memanjang }}%; background:#378ADD;"></div></div>
+              <div class="bar-val">{{ jumlah_memanjang }}</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">Tidak Terklasifikasi</div>
+              <div class="bar-track"><div class="bar-fill-chart" style="width:{{ persen_tidak }}%; background:#AAAAAA;"></div></div>
+              <div class="bar-val">{{ jumlah_tidak }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <h3>Proporsi Jenis Kerusakan Jalan Raya</h3>
+          <div class="donut-wrap">
+            <div class="donut" style="background: conic-gradient(#BA7517 0% {{ persen_buaya }}%, #E24B4A {{ persen_buaya }}% {{ persen_buaya + persen_lubang }}%, #378ADD {{ persen_buaya + persen_lubang }}% {{ persen_buaya + persen_lubang + persen_memanjang }}%, #AAAAAA {{ persen_buaya + persen_lubang + persen_memanjang }}% 100%);"></div>
+            <div class="donut-legend">
+              <div class="legend-item"><div class="legend-dot" style="background:#E24B4A;"></div>Berlubang — {{ persen_lubang }}%</div>
+              <div class="legend-item"><div class="legend-dot" style="background:#BA7517;"></div>Retak Kulit Buaya — {{ persen_buaya }}%</div>
+              <div class="legend-item"><div class="legend-dot" style="background:#378ADD;"></div>Retak Memanjang — {{ persen_memanjang }}%</div>
+              <div class="legend-item"><div class="legend-dot" style="background:#AAAAAA;"></div>Tidak Terklasifikasi — {{ persen_tidak }}%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="recent-card">
+        <div class="recent-header">
+          <span>Klasifikasi Terbaru</span>
+          <a href="{{ url_for('admin_data_deteksi') }}" class="btn-lihat-semua">Lihat semua →</a>
+        </div>
+        <table>
+          <thead>
+            <tr><th>User</th><th>File</th><th>Jenis Kerusakan</th><th>Confidence</th><th>Tanggal</th></tr>
+          </thead>
+          <tbody>
+            {% for item in deteksi_terbaru %}
+            <tr>
+              <td>{{ item.user.nama_depan }} {{ item.user.nama_belakang }}</td>
+              <td>{{ item.foto_path }}</td>
+              <td>
+                {% if item.jenis_kerusakan == 'Berlubang' %}<span class="jenis-tag tag-lubang"><span class="tag-dot" style="background:#E24B4A;"></span>{{ item.jenis_kerusakan }}</span>
+                {% elif item.jenis_kerusakan == 'Retak Kulit Buaya' %}<span class="jenis-tag tag-buaya"><span class="tag-dot" style="background:#BA7517;"></span>{{ item.jenis_kerusakan }}</span>
+                {% elif item.jenis_kerusakan == 'Retak Memanjang' %}<span class="jenis-tag tag-memanjang"><span class="tag-dot" style="background:#378ADD;"></span>{{ item.jenis_kerusakan }}</span>
+                {% else %}<span class="jenis-tag tag-tidak">— {{ item.jenis_kerusakan }}</span>{% endif %}
+              </td>
+              <td>{{ "%.0f"|format(item.confidence * 100) }}%</td>
+              <td>{{ item.tanggal.strftime('%d %b %Y') }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-logo"><div class="dot"></div>WeRoad</div>
+    <p>© 2026 WeRoad · Sistem Klasifikasi Jenis Kerusakan Jalan Raya</p>
+  </footer>
+</body>
+</html>

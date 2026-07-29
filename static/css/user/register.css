@@ -1,0 +1,24 @@
+/* register.css */
+.form-row { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 12px; }
+
+.strength-bar { 
+    display: flex; 
+    gap: 4px; 
+    margin-top: 8px; }
+
+.strength-bar .bar { 
+    flex: 1; 
+    height: 3px; 
+    border-radius: 99px; 
+    background: var(--abu-border); }
+
+.strength-bar .bar.active { 
+    background: var(--kuning); }
+
+.strength-hint { 
+    font-size: 11px; 
+    color: #AAAAAA; 
+    margin-top: 5px; }

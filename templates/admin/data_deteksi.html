@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data Klasifikasi — WeRoad Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/data_deteksi.css') }}" />
+</head>
+<body>
+  <nav class="navbar">
+    <a href="{{ url_for('landing') }}" class="nav-logo">
+      <div class="logo-icon"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" onerror="this.parentElement.textContent='🛣️'" /></div>
+      WeRoad <span class="admin-badge">ADMIN</span>
+    </a>
+    <div class="nav-right">
+      <div class="nav-admin"><div class="nav-avatar admin">🛡️</div>Administrator</div>
+      <a href="{{ url_for('admin_logout') }}" class="btn btn-ghost btn-sm">Keluar</a>
+    </div>
+  </nav>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-section">Menu</div>
+      <a href="{{ url_for('admin_dashboard') }}" class="sidebar-item"><span class="s-icon">📊</span> Dashboard</a>
+      <a href="{{ url_for('admin_data_deteksi') }}" class="sidebar-item active"><span class="s-icon">🗂️</span> Data Klasifikasi</a>
+      <a href="{{ url_for('admin_manajemen_user') }}" class="sidebar-item"><span class="s-icon">👥</span> Manajemen User</a>
+    </aside>
+
+    <div class="admin-content">
+      <div class="page-header">
+        <h1>Data Klasifikasi</h1>
+        <p>Semua data hasil klasifikasi dari seluruh user. <br>
+          Admin dapat mendownload atau menghapus foto yang diupload user.</p>
+      </div>
+
+      <form method="GET" action="{{ url_for('admin_data_deteksi') }}">
+        <div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
+          <select name="filter_jenis" onchange="this.form.submit()">
+            <option value="">Semua jenis kerusakan</option>
+            <option value="Berlubang" {% if request.args.get('filter_jenis')=='Berlubang' %}selected{% endif %}>Berlubang</option>
+            <option value="Retak Kulit Buaya" {% if request.args.get('filter_jenis')=='Retak Kulit Buaya' %}selected{% endif %}>Retak Kulit Buaya</option>
+            <option value="Retak Memanjang" {% if request.args.get('filter_jenis')=='Retak Memanjang' %}selected{% endif %}>Retak Memanjang</option>
+            <option value="Tidak Terdeteksi" {% if request.args.get('filter_jenis')=='Tidak Terdeteksi' %}selected{% endif %}>Tidak Terklasifikasi</option>
+          </select>
+          <select name="filter_user" onchange="this.form.submit()">
+            <option value="">Semua user</option>
+            {% for u in daftar_user %}
+              <option value="{{ u.id }}" {% if request.args.get('filter_user')|int == u.id %}selected{% endif %}>{{ u.nama_depan }} {{ u.nama_belakang }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </form>
+
+      <div class="table-wrap">
+        <div class="table-header">
+          <span>Data Klasifikasi</span>
+          <small>{{ total }} data</small>
+        </div>
+        <table>
+          <thead>
+            <tr><th>Foto &amp; User</th><th>Jenis Kerusakan</th><th>Confidence</th><th>Tanggal</th><th>Kelola</th></tr>
+          </thead>
+          <tbody>
+            {% for item in data %}
+            <tr>
+              <td>
+                <div class="foto-cell">
+                  <div class="foto-thumb"><img src="{{ url_for('static', filename='uploads/' + item.foto_path) }}" alt="foto" /></div>
+                  <div>
+                    <div class="foto-nama">{{ item.foto_path }}</div>
+                    <div class="foto-sub">👤 {{ item.user.nama_depan }} {{ item.user.nama_belakang }}</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                {% if item.jenis_kerusakan == 'Berlubang' %}<span class="jenis-tag tag-lubang"><span class="tag-dot" style="background:#E24B4A;"></span>{{ item.jenis_kerusakan }}</span>
+                {% elif item.jenis_kerusakan == 'Retak Kulit Buaya' %}<span class="jenis-tag tag-buaya"><span class="tag-dot" style="background:#BA7517;"></span>{{ item.jenis_kerusakan }}</span>
+                {% elif item.jenis_kerusakan == 'Retak Memanjang' %}<span class="jenis-tag tag-memanjang"><span class="tag-dot" style="background:#378ADD;"></span>{{ item.jenis_kerusakan }}</span>
+                {% else %}<span class="jenis-tag tag-tidak">— {{ item.jenis_kerusakan }}</span>{% endif %}
+              </td>
+              <td><div class="confidence-cell"><div class="mini-bar"><div class="mini-fill" style="width:{{ "%.0f"|format(item.confidence*100) }}%"></div></div>{{ "%.0f"|format(item.confidence*100) }}%</div></td>
+              <td>{{ item.tanggal.strftime('%d %b %Y') }}</td>
+              <td>
+                <div class="action-cell">
+                  <button class="btn btn-kuning btn-sm" onclick="showModal('{{ url_for('static', filename='uploads/' + item.foto_path) }}','{{ item.foto_path }}','{{ item.user.nama_depan }} {{ item.user.nama_belakang }}','{{ item.jenis_kerusakan }}','{{ item.tanggal.strftime('%d %b %Y') }}')">Download Foto</button>
+                  <a href="{{ url_for('admin_hapus_deteksi', id=item.id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Hapus data ini?')">Delete 🗑️</a>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% if pages > 1 %}
+        <div class="pagination">
+          {% for p in range(1, pages+1) %}
+            <a href="{{ url_for('admin_data_deteksi', page=p, filter_jenis=request.args.get('filter_jenis',''), filter_user=request.args.get('filter_user','')) }}" class="page-btn {% if p == current_page %}active{% endif %}">{{ p }}</a>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-logo"><div class="dot"></div>WeRoad</div>
+    <p>© 2026 WeRoad · Sistem Klasifikasi Jenis Kerusakan Jalan Raya</p>
+  </footer>
+
+  <!-- MODAL DOWNLOAD -->
+  <div class="modal-overlay" id="modalOverlay" style="display:none;">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Info &amp; Download Foto</h3>
+        <button class="btn-close" onclick="hideModal()">✕</button>
+      </div>
+      <div class="modal-img"><img id="modalFotoImg" src="" alt="foto" style="width:100%;height:100%;object-fit:cover;" /></div>
+      <div class="modal-info">
+        <div class="modal-row"><span class="key">Nama file</span><span class="val" id="modalNamaFile"></span></div>
+        <div class="modal-row"><span class="key">Diupload oleh</span><span class="val" id="modalNamaUser"></span></div>
+        <div class="modal-row"><span class="key">Jenis kerusakan</span><span class="val" id="modalJenis"></span></div>
+        <div class="modal-row"><span class="key">Tanggal</span><span class="val" id="modalTanggal"></span></div>
+      </div>
+      <a id="modalDownloadBtn" href="#" download class="btn btn-kuning btn-full">Download Foto</a>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/admin/data_deteksi.js') }}"></script>
+</body>
+</html>

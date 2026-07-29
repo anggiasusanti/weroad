@@ -1,0 +1,32 @@
+/* data_deteksi.css */
+.modal-img { 
+    width: 100%; 
+    height: 200px;
+    background: var(--abu-card); 
+    border-radius: var(--radius-md); 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-size: 48px; 
+    margin-bottom: 16px; 
+    overflow: hidden; }
+
+.modal-img img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; }
+
+.modal-info { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 8px; 
+    margin-bottom: 16px; }
+
+.modal-row { 
+    display: flex; 
+    justify-content: space-between; 
+    font-size: 13px; }
+
+.modal-row .key { color: var(--teks-sekunder); }
+
+.modal-row .val { font-weight: 500; }

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manajemen User — WeRoad Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/manajemen_user.css') }}" />
+</head>
+<body>
+  <nav class="navbar">
+    <a href="{{ url_for('landing') }}" class="nav-logo">
+      <div class="logo-icon"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" onerror="this.parentElement.textContent='🛣️'" /></div>
+      WeRoad <span class="admin-badge">ADMIN</span>
+    </a>
+    <div class="nav-right">
+      <div class="nav-admin"><div class="nav-avatar admin">🛡️</div>Administrator</div>
+      <a href="{{ url_for('admin_logout') }}" class="btn btn-ghost btn-sm">Keluar</a>
+    </div>
+  </nav>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-section">Menu</div>
+      <a href="{{ url_for('admin_dashboard') }}" class="sidebar-item"><span class="s-icon">📊</span> Dashboard</a>
+      <a href="{{ url_for('admin_data_deteksi') }}" class="sidebar-item"><span class="s-icon">🗂️</span> Data Klasifikasi</a>
+      <a href="{{ url_for('admin_manajemen_user') }}" class="sidebar-item active"><span class="s-icon">👥</span> Manajemen User</a>
+    </aside>
+
+    <div class="admin-content">
+      <div class="page-header">
+        <h1>Manajemen User</h1>
+        <p>Kelola akun user yang terdaftar di sistem.</p>
+      </div>
+
+      <div class="stats-grid col-3">
+        <div class="stat-card"><div class="num">{{ total_user }}</div><div class="lbl">Total User</div><div class="trend trend-up">↑ {{ user_baru }} User baru tahun ini</div></div>
+        <div class="stat-card"><div class="num">{{ user_aktif }}</div><div class="lbl">User Aktif</div></div>
+        <div class="stat-card"><div class="num">{{ user_nonaktif }}</div><div class="lbl">User Nonaktif</div></div>
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-header">
+          <span>Daftar User</span>
+          <small>{{ total_user }} user terdaftar</small>
+        </div>
+        <table>
+          <thead>
+            <tr><th>User</th><th>Tanggal Daftar</th><th>Total Klasifikasi</th><th>Status</th><th>Kelola</th></tr>
+          </thead>
+          <tbody>
+            {% for u in users %}
+            <tr>
+              <td>
+                <div class="user-cell">
+                  <div class="user-avatar">👤</div>
+                  <div>
+                    <div class="user-nama">{{ u.nama_depan }} {{ u.nama_belakang }}</div>
+                    <div class="user-email">{{ u.email }}</div>
+                  </div>
+                </div>
+              </td>
+              <td>{{ u.created_at.strftime('%d %b %Y') }}</td>
+              <td>{{ u.total_deteksi }}</td>
+              <td>
+                {% if u.aktif %}
+                  <span class="status-badge status-aktif"><span class="status-dot" style="background:#2E7D52;"></span>Aktif</span>
+                {% else %}
+                  <span class="status-badge status-nonaktif"><span class="status-dot" style="background:#AAAAAA;"></span>Nonaktif</span>
+                {% endif %}
+              </td>
+              <td>
+                <div class="action-cell">
+                  {% if u.aktif %}
+                    <a href="{{ url_for('admin_toggle_user', id=u.id) }}" class="btn btn-muted btn-sm">🚫 Nonaktifkan</a>
+                  {% else %}
+                    <a href="{{ url_for('admin_toggle_user', id=u.id) }}" class="btn btn-success btn-sm">✅ Aktifkan</a>
+                  {% endif %}
+                  <button class="btn btn-danger btn-sm" onclick="showHapusModal({{ u.id }}, '{{ u.nama_depan }} {{ u.nama_belakang }}')">🗑️ Hapus</button>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% if pages > 1 %}
+        <div class="pagination">
+          {% for p in range(1, pages+1) %}
+            <a href="{{ url_for('admin_manajemen_user', page=p) }}" class="page-btn {% if p == current_page %}active{% endif %}">{{ p }}</a>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-logo"><div class="dot"></div>WeRoad</div>
+    <p>© 2026 WeRoad · Sistem Klasifikasi Jenis Kerusakan Jalan Raya</p>
+  </footer>
+
+  <!-- MODAL HAPUS -->
+  <div class="modal-overlay" id="modalHapus" style="display:none;">
+    <div class="modal modal-konfirm">
+      <div class="modal-icon">🗑️</div>
+      <h3>Hapus Akun?</h3>
+      <p>Akun <strong id="namaUserHapus"></strong> dan semua data klasifikasi akan dihapus permanen <br>
+        Akun yang telah dihapus tidak bisa dipulihkan!</p>
+      <div class="modal-actions">
+        <button class="btn btn-outline" onclick="hideHapusModal()">Batal</button>
+        <a id="linkHapusUser" href="#" class="btn btn-danger" style="background:#E24B4A; color:#fff; border:none;">Ya, Hapus</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showHapusModal(id, nama) {
+      document.getElementById('namaUserHapus').textContent = nama;
+      document.getElementById('linkHapusUser').href = '/admin/user/hapus/' + id;
+      document.getElementById('modalHapus').style.display = 'flex';
+    }
+    function hideHapusModal() {
+      document.getElementById('modalHapus').style.display = 'none';
+    }
+  </script>
+</body>
+</html>

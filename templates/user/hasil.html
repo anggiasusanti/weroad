@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hasil Klasifikasi — WeRoad</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/user/hasil.css') }}" />
+</head>
+<body>
+  <nav class="navbar">
+    <a href="{{ url_for('landing') }}" class="nav-logo">
+      <div class="logo-icon"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" onerror="this.parentElement.textContent='🛣️'" /></div>
+      WeRoad
+    </a>
+    <div class="nav-right">
+      <div class="nav-user">
+        <div class="nav-avatar user">👤</div>
+        {{ current_user.nama_depan }}
+      </div>
+      <a href="{{ url_for('logout') }}" class="btn btn-ghost btn-sm">Keluar</a>
+    </div>
+  </nav>
+
+  <div class="nav-menu">
+    <a href="{{ url_for('deteksi') }}" class="nav-item active">🔍 Klasifikasi</a>
+    <a href="{{ url_for('riwayat') }}" class="nav-item">📋 Riwayat</a>
+  </div>
+
+  <div class="hasil-page">
+    <div class="hasil-main">
+      <div class="hasil-header">
+        <div>
+          <h1>Hasil Klasifikasi</h1>
+          <p>Dianalisis pada {{ hasil.tanggal.strftime('%d %b %Y, %H:%M') }} WIB</p>
+        </div>
+        <a href="{{ url_for('deteksi') }}" class="btn btn-kuning">🔍 Analisis Lagi</a>
+      </div>
+
+      {% if hasil.jenis_kerusakan == 'Tidak Terdeteksi' %}
+      <!-- TIDAK TERDETEKSI -->
+      <div class="tidak-terdeteksi">
+        <div class="icon">🔍</div>
+        <h3>Kerusakan Tidak Terklasifikasi</h3>
+        <p>Sistem tidak dapat mengidentifikasi jenis kerusakan pada foto ini.<br />
+        Pastikan foto menampilkan permukaan jalan dengan jelas dan pencahayaan yang cukup.</p>
+        <div class="badge badge-kuning" style="margin-top:14px;">
+          Kemungkinan Jalan pada Foto Tidak Mengalami Kerusakan.
+        </div>
+      </div>
+      <div class="card" style="padding:20px;">
+        <div class="foto-preview" style="height:200px; border-radius:10px; overflow:hidden; margin-bottom:12px;">
+          <img src="{{ url_for('static', filename='uploads/' + hasil.foto_path) }}" alt="Foto" style="width:100%;height:100%;object-fit:cover;" />
+        </div>
+        <span style="font-size:12px; color:var(--teks-sekunder);">{{ hasil.foto_path }}</span>
+      </div>
+
+      {% else %}
+      <!-- TERDETEKSI -->
+      <div class="result-main">
+        <div class="foto-card">
+          <div class="foto-preview">
+            <img src="{{ url_for('static', filename='uploads/' + hasil.foto_path) }}" alt="Foto jalan" />
+          </div>
+          <div class="foto-info">
+            <span>{{ hasil.foto_path }}</span>
+            <p>Diupload {{ hasil.tanggal.strftime('%d %b %Y · %H:%M') }} WIB</p>
+          </div>
+        </div>
+
+        <div class="result-card">
+          <div>
+            <div class="result-label">Jenis Kerusakan</div>
+            {% if hasil.jenis_kerusakan == 'Berlubang' %}
+              <div class="jenis-badge-hasil" style="background:#FFEAEA; border:0.5px solid #F0A0A0;">
+                <span class="tag-dot" style="background:#E24B4A;"></span>
+                <span style="color:#7A0000;">{{ hasil.jenis_kerusakan }}</span>
+              </div>
+            {% elif hasil.jenis_kerusakan == 'Retak Kulit Buaya' %}
+              <div class="jenis-badge-hasil" style="background:#FFF4E0; border:0.5px solid #F0C070;">
+                <span class="tag-dot" style="background:#BA7517;"></span>
+                <span style="color:#7A4A00;">{{ hasil.jenis_kerusakan }}</span>
+              </div>
+            {% else %}
+              <div class="jenis-badge-hasil" style="background:#EAF2FF; border:0.5px solid #A0C0F0;">
+                <span class="tag-dot" style="background:#378ADD;"></span>
+                <span style="color:#1A4A7A;">{{ hasil.jenis_kerusakan }}</span>
+              </div>
+            {% endif %}
+          </div>
+
+          <div>
+            <div class="result-label">Tingkat Keyakinan</div>
+            <div class="confidence-top">
+              <span>Confidence Score</span>
+              <strong>{{ "%.0f"|format(hasil.confidence * 100) }}%</strong>
+            </div>
+            <div class="bar-bg">
+              <div class="bar-fill" style="width: {{ "%.0f"|format(hasil.confidence * 100) }}%;"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="result-label">Informasi</div>
+            <div class="meta-row">
+              <div class="meta-item"><span class="key">Nama file</span><span class="val">{{ hasil.foto_path }}</span></div>
+              <div class="meta-item"><span class="key">Tanggal</span><span class="val">{{ hasil.tanggal.strftime('%d %b %Y') }}</span></div>
+              <div class="meta-item"><span class="key">Waktu</span><span class="val">{{ hasil.tanggal.strftime('%H:%M') }} WIB</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DETAIL KERUSAKAN -->
+      <div class="info-section">
+        <h2>Detail Kerusakan — {{ hasil.jenis_kerusakan }}</h2>
+        <div class="info-grid">
+
+          <!-- PENYEBAB -->
+          <div class="info-block">
+            <h4>📌 Penyebab</h4>
+            <ul>
+              {% for p in info_kerusakan.penyebab %}
+                <li>{{ p }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+
+          <!-- REKOMENDASI METODE PENANGANAN -->
+          <div class="info-block">
+            <div class="rekomendasi-label">🔧 Alternatif Metode Penanganan</div>
+            <div class="metode-grid metode-{{ info_kerusakan.metode|length }}">
+              {% for m in info_kerusakan.metode %}
+              <div class="metode-card">
+                <div class="metode-badge">{{ m.kode }}</div>
+                <div class="metode-steps">
+                  {% for i, step in enumerate(m.langkah) %}
+                  <div class="metode-item">
+                    <div class="metode-num">{{ i+1 }}</div>
+                    <p>{{ step }}</p>
+                  </div>
+                  {% endfor %}
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- CATATAN -->
+          <div class="catatan">
+            <p><span>Catatan: </span>Pemilihan metode penanganan harus disesuaikan dengan hasil inspeksi lapangan berdasarkan ketentuan pada Manual Perbaikan Standar Bina Marga.</p>
+          </div>
+
+          <!-- REFERENSI -->
+          <div class="referensi">📚 Referensi: {{ info_kerusakan.referensi }}</div>
+
+        </div>
+      </div>
+
+      {% endif %} <!-- end if Tidak Terdeteksi -->
+
+    </div> <!-- end hasil-main -->
+  </div> <!-- end hasil-page -->
+
+  <footer class="footer">
+    <div class="footer-logo"><div class="dot"></div>WeRoad</div>
+    <p>© 2026 WeRoad · Sistem Klasifikasi Jenis Kerusakan Jalan Raya</p>
+  </footer>
+</body>
+</html>

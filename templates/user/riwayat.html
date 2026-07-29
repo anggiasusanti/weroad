@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Riwayat — WeRoad</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/user/riwayat.css') }}" />
+</head>
+<body>
+  <nav class="navbar">
+    <a href="{{ url_for('landing') }}" class="nav-logo">
+      <div class="logo-icon"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" onerror="this.parentElement.textContent='🛣️'" /></div>
+      WeRoad
+    </a>
+    <div class="nav-right">
+      <div class="nav-user">
+        <div class="nav-avatar user">👤</div>
+        {{ current_user.nama_depan }}
+      </div>
+      <a href="{{ url_for('logout') }}" class="btn btn-ghost btn-sm">Keluar</a>
+    </div>
+  </nav>
+
+  <div class="nav-menu">
+    <a href="{{ url_for('deteksi') }}" class="nav-item">🔍 Klasifikasi</a>
+    <a href="{{ url_for('riwayat') }}" class="nav-item active">📋 Riwayat</a>
+  </div>
+
+  <div class="riwayat-page">
+    <div class="riwayat-main">
+      <div class="riwayat-header">
+        <div>
+          <h1>Riwayat Klasifikasi</h1>
+          <p>Semua hasil klasifikasi yang pernah {{ current_user.nama_depan }} lakukan.</p>
+        </div>
+        <a href="{{ url_for('deteksi') }}" class="btn btn-kuning">🔍 Analisis Baru</a>
+      </div>
+
+      <div class="stats-grid col-3" style="margin-bottom:20px;">
+        <div class="stat-card"><div class="num">{{ total }}</div><div class="lbl">Total klasifikasi</div></div>
+        <div class="stat-card"><div class="num">{{ tahun_ini }}</div><div class="lbl">Tahun ini yang Terklasifikasi</div></div>
+        <div class="stat-card"><div class="num" style="font-size:14px;">{{ terbanyak or '-' }}</div><div class="lbl">Terbanyak diklasifikasi</div></div>
+      </div>
+
+      <div class="toolbar">
+        <form method="GET" action="{{ url_for('riwayat') }}">
+          <select name="filter" onchange="this.form.submit()">
+            <option value="">Semua jenis kerusakan</option>
+            <option value="Berlubang" {% if request.args.get('filter')=='Berlubang' %}selected{% endif %}>Berlubang</option>
+            <option value="Retak Kulit Buaya" {% if request.args.get('filter')=='Retak Kulit Buaya' %}selected{% endif %}>Retak Kulit Buaya</option>
+            <option value="Retak Memanjang" {% if request.args.get('filter')=='Retak Memanjang' %}selected{% endif %}>Retak Memanjang</option>
+            <option value="Tidak Terdeteksi" {% if request.args.get('filter')=='Tidak Terdeteksi' %}selected{% endif %}>Tidak Terklasifikasi</option>
+          </select>
+        </form>
+      </div>
+
+      {% if data_riwayat %}
+      <div class="table-wrap">
+        <div class="table-header">
+          <span>Hasil Klasifikasi</span>
+          <small>{{ total }} data</small>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Foto</th>
+              <th>Jenis Kerusakan</th>
+              <th>Confidence</th>
+              <th>Tanggal</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in data_riwayat %}
+            <tr>
+              <td>
+                <div class="foto-cell">
+                  <div class="foto-thumb">
+                    <img src="{{ url_for('static', filename='uploads/' + item.foto_path) }}" alt="foto" />
+                  </div>
+                  <div>
+                    <div class="foto-nama">{{ item.foto_path }}</div>
+                    <div class="foto-sub">{{ item.tanggal.strftime('%d %b %Y, %H:%M') }}</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                {% if item.jenis_kerusakan == 'Berlubang' %}
+                  <span class="jenis-tag tag-lubang"><span class="tag-dot" style="background:#E24B4A;"></span>{{ item.jenis_kerusakan }}</span>
+                {% elif item.jenis_kerusakan == 'Retak Kulit Buaya' %}
+                  <span class="jenis-tag tag-buaya"><span class="tag-dot" style="background:#BA7517;"></span>{{ item.jenis_kerusakan }}</span>
+                {% elif item.jenis_kerusakan == 'Retak Memanjang' %}
+                  <span class="jenis-tag tag-memanjang"><span class="tag-dot" style="background:#378ADD;"></span>{{ item.jenis_kerusakan }}</span>
+                {% else %}
+                  <span class="jenis-tag tag-tidak">— {{ item.jenis_kerusakan }}</span>
+                {% endif %}
+              </td>
+              <td>
+                <div class="confidence-cell">
+                  <div class="mini-bar"><div class="mini-fill" style="width: {{ "%.0f"|format(item.confidence * 100) }}%"></div></div>
+                  {{ "%.0f"|format(item.confidence * 100) }}%
+                </div>
+              </td>
+              <td>{{ item.tanggal.strftime('%d %b %Y') }}</td>
+              <td><a href="{{ url_for('hasil', id=item.id) }}" class="btn btn-kuning btn-sm">Lihat</a></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <!-- Pagination -->
+        {% if pages > 1 %}
+        <div class="pagination">
+          {% for p in range(1, pages+1) %}
+            <a href="{{ url_for('riwayat', page=p, filter=request.args.get('filter','')) }}" class="page-btn {% if p == current_page %}active{% endif %}">{{ p }}</a>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      {% else %}
+      <div class="card">
+        <div class="empty-state">
+          <div class="icon">📋</div>
+          <p>Belum ada data klasifikasi. <a href="{{ url_for('deteksi') }}" style="color:var(--kuning-gelap);">Mulai deteksi sekarang</a></p>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-logo"><div class="dot"></div>WeRoad</div>
+    <p>© 2026 WeRoad · Sistem Klasifikasi Jenis Kerusakan Jalan Raya</p>
+  </footer>
+</body>
+</html>

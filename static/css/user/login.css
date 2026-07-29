@@ -1,0 +1,74 @@
+/* login.css */
+.auth-page { 
+    min-height: 100vh; 
+    display: flex; 
+    flex-direction: column; }
+
+.auth-main { 
+    flex: 1; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    padding: 40px 1rem; }
+
+.auth-card { 
+    background: var(--putih); 
+    border: 0.5px solid var(--abu-border); 
+    border-radius: var(--radius-xl); 
+    padding: 36px 32px; 
+    width: 100%; 
+    max-width: 400px; }
+
+.auth-icon { 
+    width: 48px; 
+    height: 48px; 
+    border-radius: 12px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    margin: 0 auto 16px; 
+    font-size: 24px; }
+
+.auth-icon.user { background: var(--kuning-muda); }
+
+.auth-icon.admin { background: var(--abu-gelap); }
+
+.auth-card h1 { 
+    font-size: 20px; 
+    font-weight: 600; 
+    color: var(--teks-utama); 
+    margin-bottom: 6px; 
+    text-align: center; }
+
+.auth-card .subtitle { 
+    font-size: 13px; 
+    color: var(--teks-sekunder); 
+    line-height: 1.6; 
+    text-align: center; 
+    margin-bottom: 28px; }
+
+.form-footer { 
+    display: flex; 
+    justify-content: flex-end; 
+    margin-top: -8px; 
+    margin-bottom: 20px; }
+
+.link { 
+    font-size: 12px; 
+    color: var(--kuning-gelap); 
+    cursor: pointer; }
+
+.auth-bottom { 
+    text-align: center; 
+    font-size: 13px; 
+    color: var(--teks-sekunder); 
+    margin-top: 4px; }
+
+.auth-bottom a { 
+    color: var(--kuning-gelap); 
+    font-weight: 500; 
+    cursor: pointer; }
+
+.admin-link { 
+    text-align: center; 
+    margin-top: 20px; }

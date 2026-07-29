@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deteksi — WeRoad</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/user/deteksi.css') }}" />
+</head>
+<body>
+  <nav class="navbar">
+    <a href="{{ url_for('landing') }}" class="nav-logo">
+      <div class="logo-icon"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" onerror="this.parentElement.textContent='🛣️'" /></div>
+      WeRoad
+    </a>
+    <div class="nav-right">
+      <div class="nav-user">
+        <div class="nav-avatar user">👤</div>
+        {{ current_user.nama_depan }}
+      </div>
+      <a href="{{ url_for('logout') }}" class="btn btn-ghost btn-sm">Keluar</a>
+    </div>
+  </nav>
+
+  <div class="nav-menu">
+    <a href="{{ url_for('deteksi') }}" class="nav-item active">🔍 Klasifikasi</a>
+    <a href="{{ url_for('riwayat') }}" class="nav-item">📋 Riwayat</a>
+  </div>
+
+  <div class="deteksi-page">
+    <div class="deteksi-main">
+      <div class="page-header">
+        <p style="font-size: 26px; font-weight: 600; color: var(--kuning-gelap); margin-bottom: 4px;"> Selamat datang, {{ current_user.nama_depan }} {{ current_user.nama_belakang }}!</p>
+        <h1>Klasifikasi Jenis Kerusakan Jalan Raya</h1>
+        <p>Upload foto jalan raya untuk dianalisis oleh sistem.</p>
+      </div>
+
+      <form method="POST" action="{{ url_for('deteksi') }}" enctype="multipart/form-data" id="formDeteksi">
+
+        <!-- UPLOAD AREA -->
+        <div class="upload-area" id="uploadArea">
+          <div class="upload-icon">📷</div>
+          <h3>Upload foto jalan</h3>
+          <p>Ambil foto langsung atau pilih foto untuk di upload.</p>
+          <span>Format: JPG, JPEG, PNG · Ukuran maks. 10MB</span>
+
+          <div class="btn-row">
+            <button type="button" class="btn btn-kuning" onclick="document.getElementById('inputKamera').click()"> Ambil Foto</button>
+            <button type="button" class="btn btn-kuning" onclick="document.getElementById('inputGaleri').click()">Pilih Foto</button>
+          </div>
+          
+          <!-- <button type="button" class="btn btn-kuning" onclick="document.getElementById('inputFile').click()">Pilih Foto</button> -->
+
+          <!-- INPUT KAMERA & PILIH FILE ATAU FOTO -->
+          <!-- <input type="file" id="inputFile" name="foto" accept="image/*" style="display:none;" required /> -->
+           <!-- Input khusus kamera (capture langsung buka kamera di HP/laptop) -->
+          <input type="file" id="inputKamera" accept="image/*" capture="environment" style="display:none;" />
+
+          <!-- Input khusus galeri/file biasa -->
+          <input type="file" id="inputGaleri" accept="image/*" style="display:none;" required />
+
+          <!-- Input yang akan dikirim ke server (diisi otomatis lewat JS) -->
+          <input type="file" id="inputFile" name="foto" accept="image/*" style="display:none;" required />
+        </div>
+
+        <!-- PREVIEW -->
+        <div class="preview-area" id="previewArea">
+          <div class="preview-header">
+            <span id="namaFile">foto.jpg</span>
+            <button type="button" class="btn-ganti" onclick="hidePreview()">Ganti foto</button>
+          </div>
+          <div class="preview-img">
+            <img id="previewImg" src="" alt="Preview foto" />
+          </div>
+        </div>
+
+        <div class="info-box">
+          <span>💡</span>
+          <p>Pastikan foto diambil dari posisi tegak lurus menghadap permukaan jalan dan kerusakan berada di tengah agar hasil deteksi lebih akurat.</p>
+        </div>
+
+        <div class="tips">
+          <h4>Tips foto yang baik</h4>
+          <div class="tips-grid">
+            <div class="tip-item">✅ Pencahayaan cukup, tidak terlalu gelap dan tidak terlalu terang</div>
+            <div class="tip-item">✅ Fokus pada area kerusakan</div>
+            <div class="tip-item">✅ Jarak pengambilan 1–2 meter</div>
+            <div class="tip-item">❌ Hindari foto buram atau goyang</div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-analisis" id="btnAnalisis" disabled>
+          🔍 Analisis Foto
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <section class="section" id="cara-kerja">
+    <div class="section-label">Cara kerja</div>
+    <h2>3 langkah mudah</h2>
+    <p>Tidak perlu keahlian teknis, siapa saja bisa menganalisis jenis kerusakan jalan raya .</p>
+    <div class="steps-grid">
+      <div class="step-card"><div class="step-num">1</div><h3>Upload foto</h3><p>Ambil atau pilih foto jalan raya yang ingin dianalisis dari perangkatmu.</p></div>
+      <div class="step-card"><div class="step-num">2</div><h3>Analisis otomatis</h3><p>Model AI memproses gambar dan mengidentifikasi jenis kerusakan.</p></div>
+      <div class="step-card"><div class="step-num">3</div><h3>Lihat hasil</h3><p>Dapatkan jenis kerusakan, penyebab, dan alternatif metode penanganan berbasis Ditijen Bina Marga</p></div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section class="section" id="jenis-kerusakan">
+    <div class="section-label">Jenis kerusakan</div>
+    <h2>Jenis Kerusakan Jalan Raya yang bisa diklasifikasi</h2>
+    <p>Sistem mengenali 3 jenis kerusakan umum pada perkerasan jalan raya</p>
+    <div class="damage-grid">
+      <div class="damage-card"><div class="damage-dot" style="background:#E24B4A;"></div><div><h4>Berlubang (Pothole)</h4><p>Cekungan pada permukaan akibat kehilangan material lapisan perkerasan.</p></div></div>
+      <div class="damage-card"><div class="damage-dot" style="background:#BA7517;"></div><div><h4>Retak Kulit Buaya (Alligator Crack)</h4><p>Retakan saling silang menyerupai pola kulit buaya akibat lemahnya material.</p></div></div>
+      <div class="damage-card"><div class="damage-dot" style="background:#378ADD;"></div><div><h4>Retak Memanjang (Longitudinal Crack)</h4><p>Retakan yang sejajar dengan sumbu jalan akibat beban atau pergerakan tanah.</p></div></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-logo"><div class="dot"></div>WeRoad</div>
+    <p>© 2026 WeRoad · Sistem Klasifikasi Jenis Kerusakan Jalan Raya</p>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/user/deteksi.js') }}"></script>
+</body>
+</html>

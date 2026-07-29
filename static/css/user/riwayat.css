@@ -1,0 +1,48 @@
+/* riwayat.css */
+.riwayat-page { 
+    min-height: 100vh; 
+    display: flex; 
+    flex-direction: column; }
+
+.riwayat-main { 
+    flex: 1; 
+    max-width: 800px; 
+    margin: 0 auto; 
+    width: 100%; 
+    padding: 36px 2rem; }
+
+.riwayat-header { 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    margin-bottom: 24px; 
+    flex-wrap: wrap; 
+    gap: 12px; }
+
+.riwayat-header h1 { 
+    font-size: 20px; 
+    font-weight: 600; }
+
+.riwayat-header p { 
+    font-size: 13px; 
+    color: var(--teks-sekunder); 
+    margin-top: 4px; }
+
+.toolbar { 
+    display: flex; 
+    gap: 10px; 
+    margin-bottom: 20px; 
+    flex-wrap: wrap; 
+    align-items: center; }
+
+.empty-state { 
+    padding: 48px 24px; 
+    text-align: center; }
+
+.empty-state .icon { 
+    font-size: 40px; 
+    margin-bottom: 12px; }
+
+.empty-state p { 
+    font-size: 14px; 
+    color: var(--teks-sekunder); }

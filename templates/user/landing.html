@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WeRoad— Deteksi Jenis Kerusakan Jalan Raya</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/user/landing.css') }}" />
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="{{ url_for('landing') }}" class="nav-logo">
+      <div class="logo-icon">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" onerror="this.parentElement.textContent='🛣️'" />
+      </div>
+      WeRoad
+    </a>
+    <div class="nav-links">
+      <a href="{{ url_for('login') }}" class="btn btn-ghost">Masuk</a>
+      <a href="{{ url_for('register') }}" class="btn btn-kuning">Daftar</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-badge">
+      <span class="badge badge-kuning">🛡️ Deteksi berbasis AI &nbsp;·&nbsp; Referensi Bina Marga</span>
+    </div>
+    <h1>Klasifikasi <span>Jenis Kerusakan Jalan Raya</span>
+    <p>Upload foto jalan raya, sistem kami akan menganalisis jenis kerusakan secara otomatis dengan penyebab dan rekomendasi penanganannya berdasarkan Referensi Bina Marga.</p>
+    <div class="hero-actions">
+      <a href="{{ url_for('register') }}" class="btn btn-kuning">Mulai Klasifikasi 🔍</a>
+      <a href="#cara-kerja" class="btn btn-outline">Pelajari lebih lanjut</a>
+    </div>
+    <div class="card hero-preview">
+      <div class="upload-mock">
+        <div class="icon-wrap">📷</div>
+        <p>Ambil foto langsung atau pilih foto untuk di upload</p>
+        <span> JPG, JPEG, PNG &nbsp;·&nbsp; Maks. 10MB</span>
+        <div class="btn-row" style="margin-top:8px;">
+          <a href="{{ url_for('register') }}" class="btn btn-kuning" style="font-size:13px; padding:9px 20px;">Ambil Foto</a>
+          <a href="{{ url_for('register') }}" class="btn btn-kuning" style="font-size:13px; padding:9px 20px;">Pilih Foto</a>
+        </div>
+        <!-- <a href="{{ url_for('register') }}" class="btn btn-kuning" style="margin-top:8px; font-size:13px; padding:9px 20px;">Pilih Foto</a> -->
+      </div>
+      <div class="stats-row">
+        <div class="stat-item"><div class="num">3 Jenis</div><div class="lbl">Kerusakan terklasifikasi</div></div>
+        <div class="stat-item"><div class="num">&lt; 5 dtk</div><div class="lbl">Waktu analisis</div></div>
+        <div class="stat-item"><div class="num">Bina Marga</div><div class="lbl">Referensi penanganan</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section class="section" id="cara-kerja">
+    <div class="section-label">Cara kerja</div>
+    <h2>3 langkah mudah</h2>
+    <p>Tidak perlu keahlian teknis, siapa saja bisa menganalisis jenis kerusakan jalan raya.</p>
+    <div class="steps-grid">
+      <div class="step-card"><div class="step-num">1</div><h3>Upload foto</h3><p>Ambil atau pilih foto jalan raya yang ingin dianalisis dari perangkatmu.</p></div>
+      <div class="step-card"><div class="step-num">2</div><h3>Analisis otomatis</h3><p>Model AI memproses gambar dan mengidentifikasi jenis kerusakan.</p></div>
+      <div class="step-card"><div class="step-num">3</div><h3>Lihat hasil</h3><p>Dapatkan jenis kerusakan, penyebab, dan alternatif metode penanganan berbasis Ditijen Bina Marga</p></div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section class="section" id="jenis-kerusakan">
+    <div class="section-label">Jenis kerusakan</div>
+    <h2>Jenis Kerusakan Jalan Raya yang bisa diklasifikasi</h2>
+    <p>Sistem mengenali 3 jenis kerusakan pada perkerasan jalan raya</p>
+    <div class="damage-grid">
+      <div class="damage-card"><div class="damage-dot" style="background:#E24B4A;"></div><div><h4>Berlubang (Pothole)</h4><p>Cekungan pada permukaan akibat kehilangan material lapisan perkerasan.</p></div></div>
+      <div class="damage-card"><div class="damage-dot" style="background:#BA7517;"></div><div><h4>Retak Kulit Buaya (Alligator Crack)</h4><p>Retakan saling silang menyerupai pola kulit buaya akibat lemahnya material.</p></div></div>
+      <div class="damage-card"><div class="damage-dot" style="background:#378ADD;"></div><div><h4>Retak Memanjang (Longitudinal Crack)</h4><p>Retakan yang sejajar dengan sumbu jalan akibat beban atau pergerakan tanah.</p></div></div>
+    </div>
+  </section>
+
+  <div class="cta-section">
+    <h2>Ayo Mulai Klasifikasi Kerusakan Jalan Raya Sekitarmu!</h2>
+    <p>Buat akun dan mulai analisis foto jalan raya pertamamu sekarang!</p>
+    <a href="{{ url_for('register') }}" class="btn btn-kuning">Daftar Gratis</a>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-logo"><div class="dot"></div>WeRoad</div>
+    <p>© 2026 WeRoad &nbsp;·&nbsp; Sistem Klasifikasi Jenis Kerusakan Jalan Raya</p>
+  </footer>
+
+</body>
+</html>

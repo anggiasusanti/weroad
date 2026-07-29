@@ -1,0 +1,16 @@
+/* manajemen_user.css */
+.modal-konfirm { text-align: center; }
+
+.modal-konfirm .modal-icon { 
+    font-size: 36px; 
+    margin-bottom: 14px; }
+
+.modal-konfirm h3 { 
+    font-size: 16px; 
+    font-weight: 600; 
+    margin-bottom: 8px; }
+
+.modal-konfirm p { 
+    font-size: 13px; 
+    color: var(--teks-sekunder); 
+    line-height: 1.6; }

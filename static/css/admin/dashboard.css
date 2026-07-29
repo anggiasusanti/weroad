@@ -1,0 +1,119 @@
+/* dashboard.css */
+.charts-row { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 16px; 
+    margin-bottom: 24px; }
+
+.chart-card { 
+    background: var(--putih); 
+    border: 0.5px solid var(--abu-border); 
+    border-radius: var(--radius-lg); 
+    padding: 18px 20px; }
+
+.chart-card h3 { 
+    font-size: 13px; 
+    font-weight: 600; 
+    margin-bottom: 16px; 
+    color: var(--teks-utama); }
+
+.bar-chart { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 10px; }
+
+.bar-row { 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; }
+
+.bar-label { 
+    font-size: 12px; 
+    color: var(--abu-teks); 
+    width: 120px; 
+    flex-shrink: 0; }
+
+.bar-track { 
+    flex: 1; 
+    height: 10px; 
+    background: var(--abu-card); 
+    border-radius: 99px; 
+    overflow: hidden; }
+
+.bar-fill-chart { 
+    height: 100%; 
+    border-radius: 99px; }
+
+.bar-val { 
+    font-size: 12px; 
+    color: var(--teks-utama); 
+    font-weight: 500; 
+    width: 28px; 
+    text-align: right; 
+    flex-shrink: 0; }
+
+.donut-wrap { 
+    display: flex; 
+    align-items: center; 
+    gap: 20px; }
+
+.donut { 
+    width: 90px; 
+    height: 90px; 
+    border-radius: 50%; 
+    flex-shrink: 0; 
+    position: relative; }
+
+.donut::after { 
+    content: ''; 
+    position: absolute; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%); 
+    width: 54px; 
+    height: 54px; 
+    background: var(--putih); 
+    border-radius: 50%; }
+
+.donut-legend { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 8px; }
+
+.legend-item { 
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
+    font-size: 12px; 
+    color: var(--abu-teks); }
+
+.legend-dot { 
+    width: 10px; 
+    height: 10px;
+    border-radius: 50%; 
+    flex-shrink: 0; }
+
+.recent-card { 
+    background: var(--putih); 
+    border: 0.5px solid var(--abu-border); 
+    border-radius: var(--radius-lg); 
+    overflow: hidden; }
+
+.recent-header { 
+    padding: 14px 18px; 
+    border-bottom: 0.5px solid var(--abu-border);
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; }
+
+.recent-header span { 
+    font-size: 13px; 
+    font-weight: 600; }
+
+.btn-lihat-semua { 
+    font-size: 12px; 
+    color: var(--kuning-gelap); 
+    background: none; 
+    border: none; 
+    cursor: pointer; 
+    font-family: inherit; }

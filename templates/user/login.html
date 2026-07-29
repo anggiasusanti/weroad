@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Masuk — WeRoad</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/user/login.css') }}" />
+</head>
+<body>
+  <nav class="navbar">
+    <a href="{{ url_for('landing') }}" class="nav-logo">
+      <div class="logo-icon"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" onerror="this.parentElement.textContent='🛣️'" /></div>
+      WeRoad
+    </a>
+    <a href="{{ url_for('landing') }}" class="btn btn-ghost" style="font-size:13px;">← Kembali ke beranda</a>
+  </nav>
+
+  <div class="auth-page">
+    <div class="auth-main">
+      <div class="auth-card">
+        <div class="auth-icon user">🔒</div>
+        <h1>Masuk ke akun</h1>
+        <p class="subtitle">Masukkan email dan kata sandi</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div style="background:#FFEAEA; border:0.5px solid #F0C0C0; border-radius:8px; padding:10px 14px; font-size:13px; color:#AA3333; margin-bottom:16px;">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('login') }}">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <div class="input-wrap">
+              <span class="input-icon">📧</span>
+              <input type="email" id="email" name="email" placeholder="contoh@gmail.com" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="password">Kata sandi</label>
+            <div class="input-wrap">
+              <span class="input-icon">🔒</span>
+              <input type="password" id="password" name="password" placeholder="Masukkan kata sandi" required />
+              <button type="button" class="eye-btn" onclick="togglePassword('password')">👁️</button>
+            </div>
+          </div>
+          <!--<div class="form-footer"><a class="link">Lupa kata sandi?</a></div> 
+          Tidak perlu, reset password via email (ribet), atau reset manual admin? -->
+          <button type="submit" class="btn btn-kuning btn-full">Masuk</button>
+        </form>
+
+        <div class="divider-text"><span>atau</span></div>
+        <div class="auth-bottom">Belum punya akun? <a href="{{ url_for('register') }}">Daftar sekarang</a></div>
+        <div class="admin-link">
+          <a href="{{ url_for('admin_login') }}" class="badge badge-kuning" style="margin-top:8px;">🛡️ Masuk sebagai admin</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-logo"><div class="dot"></div>WeRoad</div>
+    <p>© 2026 WeRoad · Sistem Klasifikasi Jenis Kerusakan Jalan Raya</p>
+  </footer>
+
+  <script>
+    function togglePassword(id) {
+      const input = document.getElementById(id);
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+  </script>
+</body>
+</html>
