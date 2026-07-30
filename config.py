@@ -1,9 +1,12 @@
 # config.py — Konfigurasi RoadDetection
 
 import os
-from dotenv import load_dotenv
 
-load_dotenv()
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'roadscan-secret-key-ganti-ini'
@@ -23,7 +26,7 @@ class Config:
     ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png'}
 
     # Model
-    MODEL_PATH = os.path.join('model', 'model_kerusakan.keras')
+    MODEL_PATH = os.path.join('model', 'model_kerusakan_1.keras')
 
     # Threshold confidence
     CONFIDENCE_THRESHOLD = 0.70
