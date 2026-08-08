@@ -76,8 +76,17 @@
             <tr>
               <td>
                 <div class="foto-cell">
-                  <div class="foto-thumb">
-                    <img src="{{ url_for('static', filename='uploads/' + item.foto_path) }}" alt="foto" />
+                  <div class="foto-thumb-group">
+                    <div class="foto-thumb">
+                      <img src="{{ url_for('static', filename='uploads/' + item.foto_path) }}" alt="foto asli" />
+                      <span class="foto-label">Asli</span>
+                    </div>
+                    {% if item.gradcam_path %}
+                    <div class="foto-thumb">
+                      <img src="{{ url_for('static', filename='uploads/' + item.gradcam_path) }}" alt="grad-cam" />
+                      <span class="foto-label">Grad-CAM</span>
+                    </div>
+                    {% endif %}
                   </div>
                   <div>
                     <div class="foto-nama">{{ item.foto_path }}</div>

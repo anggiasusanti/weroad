@@ -83,8 +83,15 @@
               <td>{{ item.tanggal.strftime('%d %b %Y') }}</td>
               <td>
                 <div class="action-cell">
-                  <button class="btn btn-kuning btn-sm" onclick="showModal('{{ url_for('static', filename='uploads/' + item.foto_path) }}','{{ item.foto_path }}','{{ item.user.nama_depan }} {{ item.user.nama_belakang }}','{{ item.jenis_kerusakan }}','{{ item.tanggal.strftime('%d %b %Y') }}')">Download Foto</button>
-                  <a href="{{ url_for('admin_hapus_deteksi', id=item.id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Hapus data ini?')">Delete 🗑️</a>
+                  <button class="btn btn-kuning btn-sm" onclick="showModal(
+                    '{{ url_for('static', filename='uploads/' + item.foto_path) }}',
+                    '{% if item.gradcam_path %}{{ url_for('static', filename='uploads/' + item.gradcam_path) }}{% endif %}',
+                    '{{ item.foto_path }}',
+                    '{{ item.user.nama_depan }} {{ item.user.nama_belakang }}',
+                    '{{ item.jenis_kerusakan }}',
+                    '{{ item.tanggal.strftime('%d %b %Y') }}'
+                  )">Preview</button>
+                  <a href="{{ url_for('admin_hapus_deteksi', id=item.id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Hapus data ini?')">Delete</a>
                 </div>
               </td>
             </tr>
@@ -111,17 +118,37 @@
   <div class="modal-overlay" id="modalOverlay" style="display:none;">
     <div class="modal">
       <div class="modal-header">
-        <h3>Info &amp; Download Foto</h3>
+        <h3>Preview &amp; Download Foto</h3>
         <button class="btn-close" onclick="hideModal()">✕</button>
       </div>
-      <div class="modal-img"><img id="modalFotoImg" src="" alt="foto" style="width:100%;height:100%;object-fit:cover;" /></div>
+
+      <!-- FOTO ASLI & GRAD-CAM -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;">
+        <div>
+          <p style="font-size:11px; color:#888780; margin-bottom:6px; text-align:center;">📷 Foto Asli</p>
+          <div class="modal-img">
+            <img id="modalFotoImg" src="" alt="foto" style="width:100%;height:100%;object-fit:cover;" />
+          </div>
+        </div>
+        <div id="gradcamWrap">
+          <p style="font-size:11px; color:#888780; margin-bottom:6px; text-align:center;">💡 Grad-CAM</p>
+          <div class="modal-img">
+            <img id="modalGradcamImg" src="" alt="gradcam" style="width:100%;height:100%;object-fit:cover;" />
+          </div>
+        </div>
+      </div>
+
       <div class="modal-info">
         <div class="modal-row"><span class="key">Nama file</span><span class="val" id="modalNamaFile"></span></div>
         <div class="modal-row"><span class="key">Diupload oleh</span><span class="val" id="modalNamaUser"></span></div>
         <div class="modal-row"><span class="key">Jenis kerusakan</span><span class="val" id="modalJenis"></span></div>
         <div class="modal-row"><span class="key">Tanggal</span><span class="val" id="modalTanggal"></span></div>
       </div>
-      <a id="modalDownloadBtn" href="#" download class="btn btn-kuning btn-full">Download Foto</a>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <a id="modalDownloadBtn" href="#" download class="btn btn-kuning btn-full">Download Foto</a>
+        <a id="modalDownloadGradcam" href="#" download class="btn btn-outline btn-full">Download Grad-CAM</a>
+      </div>
     </div>
   </div>
 

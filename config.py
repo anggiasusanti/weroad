@@ -26,7 +26,7 @@ class Config:
     ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png'}
 
     # Model
-    MODEL_PATH = os.path.join('model', 'model_kerusakan_1.keras')
+    MODEL_PATH = os.path.join('model', 'model_kerusakan_jalan.keras')
 
     # Threshold confidence
-    CONFIDENCE_THRESHOLD = 0.70
+    CONFIDENCE_THRESHOLD = 0.20

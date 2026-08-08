@@ -58,16 +58,32 @@
       {% else %}
       <!-- TERDETEKSI -->
       <div class="result-main">
+
+        <!-- FOTO ASLI -->
         <div class="foto-card">
           <div class="foto-preview">
             <img src="{{ url_for('static', filename='uploads/' + hasil.foto_path) }}" alt="Foto jalan" />
           </div>
           <div class="foto-info">
-            <span>{{ hasil.foto_path }}</span>
-            <p>Diupload {{ hasil.tanggal.strftime('%d %b %Y · %H:%M') }} WIB</p>
+            <span>📷 Foto Asli</span>
+            <p>{{ hasil.foto_path }}</p>
           </div>
         </div>
 
+        <!-- GRAD-CAM. hanya tersedia di Admin
+        {% if hasil.gradcam_path %}
+        <div class="foto-card">
+          <div class="foto-preview">
+            <img src="{{ url_for('static', filename='uploads/' + hasil.gradcam_path) }}" alt="Grad-CAM" />
+          </div>
+          <div class="foto-info">
+            <span>💡 Grad-CAM Visualization</span>
+            <p>Area fokus model AI saat klasifikasi</p>
+          </div>
+        </div>
+        {% endif %} -->
+
+        <!-- RESULT CARD -->
         <div class="result-card">
           <div>
             <div class="result-label">Jenis Kerusakan</div>

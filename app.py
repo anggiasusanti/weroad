@@ -14,6 +14,7 @@ from config import Config
 import numpy as np
 from PIL import Image
 import tensorflow as tf
+import cv2
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -58,6 +59,7 @@ class HasilDeteksi(db.Model):
     foto_path        = db.Column(db.String(255), nullable=False)
     jenis_kerusakan  = db.Column(db.String(50), nullable=False)
     confidence       = db.Column(db.Float, nullable=False)
+    gradcam_path     = db.Column(db.String(255), nullable=True)
     tanggal          = db.Column(db.DateTime, default=waktu_wib)
 
 @login_manager.user_loader
@@ -89,6 +91,62 @@ def predict_image(foto_path):
     if confidence < app.config['CONFIDENCE_THRESHOLD']:
         return 'Tidak Terdeteksi', confidence
     return KELAS[idx], confidence
+
+def generate_gradcam(foto_path, filename):
+    """Generate Grad-CAM heatmap dari foto."""
+    try:
+        # Load dan preprocess gambar
+        img = Image.open(foto_path).convert('RGB').resize((224, 224))
+        img_array = np.array(img) / 255.0
+        img_array = np.expand_dims(img_array, axis=0).astype(np.float32)
+
+        # Buat model Grad-CAM dengan output layer target
+        grad_model = tf.keras.models.Model(
+            inputs=model.inputs,
+            outputs=[
+                model.get_layer('out_relu').output,
+                model.output
+            ]
+        )
+
+        # Hitung gradien
+        with tf.GradientTape() as tape:
+            conv_outputs, predictions = grad_model(img_array)
+            predicted_class = tf.argmax(predictions[0])
+            loss = predictions[:, predicted_class]
+
+        # Ambil gradien dari layer target
+        grads = tape.gradient(loss, conv_outputs)
+        pooled_grads = tf.reduce_mean(grads, axis=(0, 1, 2))
+
+        # Hitung heatmap
+        conv_outputs = conv_outputs[0]
+        heatmap = conv_outputs @ pooled_grads[..., tf.newaxis]
+        heatmap = tf.squeeze(heatmap)
+        heatmap = tf.maximum(heatmap, 0) / (tf.math.reduce_max(heatmap) + 1e-8)
+        heatmap = heatmap.numpy()
+
+        # Resize heatmap ke ukuran foto asli
+        img_orig = cv2.imread(foto_path)
+        img_orig = cv2.resize(img_orig, (224, 224))
+        heatmap_resized = cv2.resize(heatmap, (224, 224))
+        heatmap_colored = cv2.applyColorMap(
+            np.uint8(255 * heatmap_resized), cv2.COLORMAP_JET
+        )
+
+        # Overlay heatmap ke foto asli
+        superimposed = cv2.addWeighted(img_orig, 0.6, heatmap_colored, 0.4, 0)
+
+        # Simpan hasil Grad-CAM
+        gradcam_filename = f"gradcam_{filename}"
+        gradcam_path = os.path.join(app.config['UPLOAD_FOLDER'], gradcam_filename)
+        cv2.imwrite(gradcam_path, superimposed)
+
+        return gradcam_filename
+
+    except Exception as e:
+        print(f"Grad-CAM error: {e}")
+        return None
 
 # =4
 # DATABASE INFO KERUSAKAN
@@ -326,12 +384,19 @@ def deteksi():
         # Prediksi
         foto_full_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         jenis, confidence = predict_image(foto_full_path)
+
+        # Generate Grad Cam
+        gradcam_filename = None
+        if jenis != 'Tidak Terklasifikasi':
+            gradcam_filename = generate_gradcam(foto_full_path, filename)
+        
         # Simpan ke DB
         hasil = HasilDeteksi(
             user_id=current_user.id,
             foto_path=filename,
             jenis_kerusakan=jenis,
-            confidence=confidence
+            confidence=confidence,
+            gradcam_path=gradcam_filename
         )
         db.session.add(hasil)
         db.session.commit()
@@ -510,5 +575,5 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
         load_model()
-    app.run(debug=True, host='0.0.0.0')
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
 # 192.168.100.1
