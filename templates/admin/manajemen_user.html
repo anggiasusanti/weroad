@@ -8,16 +8,23 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/manajemen_user.css') }}" />
 </head>
 <body>
+  <!-- Overlay -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
   <nav class="navbar">
-    <a href="{{ url_for('landing') }}" class="nav-logo">
-      <div class="logo-icon"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" onerror="this.parentElement.textContent='🛣️'" /></div>
-      WeRoad <span class="admin-badge">ADMIN</span>
-    </a>
-    <div class="nav-right">
-      <div class="nav-admin"><div class="nav-avatar admin">🛡️</div>Administrator</div>
-      <a href="{{ url_for('admin_logout') }}" class="btn btn-ghost btn-sm">Keluar</a>
-    </div>
-  </nav>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <!-- Tombol hamburger (hanya muncul di HP) -->
+        <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+        <a href="{{ url_for('landing') }}" class="nav-logo">
+          <div class="logo-icon">...</div>
+          Weroad
+          <span class="admin-badge">ADMIN</span>
+        </a>
+      </div>
+      <div class="nav-right">
+        ...
+      </div>
+    </nav>
 
   <div class="layout">
     <aside class="sidebar">
@@ -122,6 +129,25 @@
     function hideHapusModal() {
       document.getElementById('modalHapus').style.display = 'none';
     }
+  </script>
+
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.querySelector('.sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('active');
+    }
+    function closeSidebar() {
+      const sidebar = document.querySelector('.sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      sidebar.classList.remove('open');
+      overlay.classList.remove('active');
+    }
+    // Tutup sidebar saat klik menu item di HP
+    document.querySelectorAll('.sidebar-item').forEach(item => {
+      item.addEventListener('click', closeSidebar);
+    });
   </script>
 </body>
 </html>
