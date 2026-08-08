@@ -135,18 +135,29 @@
     function toggleSidebar() {
       const sidebar = document.querySelector('.sidebar');
       const overlay = document.getElementById('sidebarOverlay');
-      sidebar.classList.toggle('open');
-      overlay.classList.toggle('active');
+      
+      // Deteksi HP atau laptop
+      if (window.innerWidth <= 768) {
+        // HP: slide dari kiri
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('active');
+      } else {
+        // Laptop: collapse/expand
+        sidebar.classList.toggle('collapsed');
+      }
     }
+    
     function closeSidebar() {
       const sidebar = document.querySelector('.sidebar');
       const overlay = document.getElementById('sidebarOverlay');
       sidebar.classList.remove('open');
       overlay.classList.remove('active');
     }
-    // Tutup sidebar saat klik menu item di HP
+    // Tutup sidebar saat klik menu item
     document.querySelectorAll('.sidebar-item').forEach(item => {
-      item.addEventListener('click', closeSidebar);
+      item.addEventListener('click', function() {
+        if (window.innerWidth <= 768) closeSidebar();
+      });
     });
   </script>
 </body>

@@ -807,3 +807,64 @@ tbody td {
     margin: 0 auto; 
     padding: 12px 28px; 
     font-size: 14px; }
+
+/* ===== RESPONSIVE ADMIN SIDEBAR ===== */
+.sidebar-toggle {
+  background: none;
+  border: 0.5px solid var(--abu-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  padding: 6px 10px;
+  color: var(--teks-utama);
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Overlay gelap saat sidebar terbuka  */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 98;
+}
+.sidebar-overlay.active { display: block; }
+
+  /* Sidebar jadi fixed dan tersembunyi di luar layar */
+  .sidebar {
+    width: 220px;
+    background: var(--putih);
+    border-right: 0.5px solid var(--abu-border);
+    padding: 20px 12px;
+    flex-shrink: 0;
+    transition: width 0.25s ease;
+    overflow: hidden;
+  }
+
+  .sidebar.collapsed {
+    width: 0;
+    padding: 0;
+  }
+
+  @media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -240px;
+    height: 100vh;
+    width: 220px;
+    z-index: 99;
+    transition: left 0.25s ease;
+    box-shadow: 4px 0 12px rgba(0,0,0,0.1);
+    padding-top: 70px;
+  }
+  .sidebar.open { left: 0; }
+  .sidebar.collapsed { width: 220px; padding: 20px 12px; padding-top: 70px; left: -240px; }
+  .admin-content { padding: 20px 16px; }
+  .stats-grid.col-4 { grid-template-columns: repeat(2, 1fr); }
+  .stats-grid.col-3 { grid-template-columns: repeat(2, 1fr); }
+  .charts-row { grid-template-columns: 1fr; }
+  .table-wrap { overflow-x: auto; }
+}
