@@ -8,26 +8,26 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/dashboard.css') }}" />
 </head>
 <body>
+
   <!-- Overlay -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
   <nav class="navbar">
-      <div style="display:flex; align-items:center; gap:12px;">
-        <!-- Tombol hamburger (hanya muncul di HP) -->
-        <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
-        <a href="{{ url_for('landing') }}" class="nav-logo">
-          <div class="logo-icon">...</div>
-          Weroad
-          <span class="admin-badge">ADMIN</span>
-        </a>
-      </div>
-      <div class="nav-right">
-        ...
-      </div>
-    </nav>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+      <a href="{{ url_for('landing') }}" class="nav-logo">
+        <div class="logo-icon"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" onerror="this.parentElement.textContent='🛣️'" /></div>
+        WeRoad <span class="admin-badge">ADMIN</span>
+      </a>
+    </div>
+    <div class="nav-right">
+      <div class="nav-admin"><div class="nav-avatar admin">🛡️</div>Administrator</div>
+      <a href="{{ url_for('admin_logout') }}" class="btn btn-ghost btn-sm">Keluar</a>
+    </div>
+  </nav>
 
   <div class="layout">
-    <aside class="sidebar">
+    <aside class="sidebar" id="adminSidebar">
       <div class="sidebar-section">Menu</div>
       <a href="{{ url_for('admin_dashboard') }}" class="sidebar-item active"><span class="s-icon">📊</span> Dashboard</a>
       <a href="{{ url_for('admin_data_deteksi') }}" class="sidebar-item"><span class="s-icon">🗂️</span> Data Klasifikasi</a>
@@ -41,25 +41,25 @@
       </div>
 
       <div class="stats-grid col-4">
-        <div class="stat-card"><div class="s-icon">👥</div><div class="num">{{ total_user }}</div><div class="lbl">Total User</div><div class="trend trend-up">↑ {{ user_baru }} User baru tahun ini</div></div>
-        <div class="stat-card"><div class="s-icon">🔍</div><div class="num">{{ total_deteksi }}</div><div class="lbl">Total Klasifikasi</div><div class="trend trend-up">↑ {{ deteksi_tahun }} Total klasifikasi tahun ini</div></div>
-        <div class="stat-card"><div class="s-icon">📷</div><div class="num">{{ total_foto }}</div><div class="lbl">Total Foto</div><div class="trend trend-up">↑ Foto tersimpan di server tahun ini</div></div>
-        <div class="stat-card"><div class="s-icon">🏆</div><div class="num" style="font-size:14px; margin-top:4px;">{{ kerusakan_terbanyak or '-' }}</div><div class="lbl">Kerusakan terbanyak</div><div class="trend trend-warn">{{ persen_terbanyak }}% dari semua deteksi tahun ini</div></div>
+        <div class="stat-card"><div class="s-icon">👥</div><div class="num">{{ total_user }}</div><div class="lbl">Total User</div><div class="trend trend-up">↑ {{ user_baru }} user baru tahun ini</div></div>
+        <div class="stat-card"><div class="s-icon">🔍</div><div class="num">{{ total_deteksi }}</div><div class="lbl">Total Klasifikasi</div><div class="trend trend-up">↑ {{ deteksi_tahun }} tahun ini</div></div>
+        <div class="stat-card"><div class="s-icon">📷</div><div class="num">{{ total_foto }}</div><div class="lbl">Total Foto</div><div class="trend trend-neutral">Tersimpan di server</div></div>
+        <div class="stat-card"><div class="s-icon">🏆</div><div class="num" style="font-size:14px; margin-top:4px;">{{ kerusakan_terbanyak or '-' }}</div><div class="lbl">Kerusakan terbanyak</div><div class="trend trend-warn">{{ persen_terbanyak }}% dari semua klasifikasi</div></div>
       </div>
 
       <div class="charts-row">
         <div class="chart-card">
-          <h3>Klasifikasi per-Jenis Kerusakan Jalan Raya</h3>
+          <h3>Klasifikasi per Jenis Kerusakan</h3>
           <div class="bar-chart">
-            <div class="bar-row">
-              <div class="bar-label">Berlubang</div>
-              <div class="bar-track"><div class="bar-fill-chart" style="width:{{ persen_lubang }}%; background:#E24B4A;"></div></div>
-              <div class="bar-val">{{ jumlah_lubang }}</div>
-            </div>
             <div class="bar-row">
               <div class="bar-label">Retak Kulit Buaya</div>
               <div class="bar-track"><div class="bar-fill-chart" style="width:{{ persen_buaya }}%; background:#BA7517;"></div></div>
               <div class="bar-val">{{ jumlah_buaya }}</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">Berlubang</div>
+              <div class="bar-track"><div class="bar-fill-chart" style="width:{{ persen_lubang }}%; background:#E24B4A;"></div></div>
+              <div class="bar-val">{{ jumlah_lubang }}</div>
             </div>
             <div class="bar-row">
               <div class="bar-label">Retak Memanjang</div>
@@ -75,12 +75,12 @@
         </div>
 
         <div class="chart-card">
-          <h3>Proporsi Jenis Kerusakan Jalan Raya</h3>
+          <h3>Proporsi Jenis Kerusakan</h3>
           <div class="donut-wrap">
             <div class="donut" style="background: conic-gradient(#BA7517 0% {{ persen_buaya }}%, #E24B4A {{ persen_buaya }}% {{ persen_buaya + persen_lubang }}%, #378ADD {{ persen_buaya + persen_lubang }}% {{ persen_buaya + persen_lubang + persen_memanjang }}%, #AAAAAA {{ persen_buaya + persen_lubang + persen_memanjang }}% 100%);"></div>
             <div class="donut-legend">
-              <div class="legend-item"><div class="legend-dot" style="background:#E24B4A;"></div>Berlubang — {{ persen_lubang }}%</div>
               <div class="legend-item"><div class="legend-dot" style="background:#BA7517;"></div>Retak Kulit Buaya — {{ persen_buaya }}%</div>
+              <div class="legend-item"><div class="legend-dot" style="background:#E24B4A;"></div>Berlubang — {{ persen_lubang }}%</div>
               <div class="legend-item"><div class="legend-dot" style="background:#378ADD;"></div>Retak Memanjang — {{ persen_memanjang }}%</div>
               <div class="legend-item"><div class="legend-dot" style="background:#AAAAAA;"></div>Tidak Terklasifikasi — {{ persen_tidak }}%</div>
             </div>
@@ -125,32 +125,27 @@
 
   <script>
     function toggleSidebar() {
-      const sidebar = document.querySelector('.sidebar');
+      const sidebar = document.getElementById('adminSidebar');
       const overlay = document.getElementById('sidebarOverlay');
-      
-      // Deteksi HP atau laptop
       if (window.innerWidth <= 768) {
-        // HP: slide dari kiri
         sidebar.classList.toggle('open');
         overlay.classList.toggle('active');
       } else {
-        // Laptop: collapse/expand
         sidebar.classList.toggle('collapsed');
       }
     }
-    
     function closeSidebar() {
-      const sidebar = document.querySelector('.sidebar');
+      const sidebar = document.getElementById('adminSidebar');
       const overlay = document.getElementById('sidebarOverlay');
       sidebar.classList.remove('open');
       overlay.classList.remove('active');
     }
-    // Tutup sidebar saat klik menu item
     document.querySelectorAll('.sidebar-item').forEach(item => {
       item.addEventListener('click', function() {
         if (window.innerWidth <= 768) closeSidebar();
       });
     });
   </script>
+
 </body>
 </html>

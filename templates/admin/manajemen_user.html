@@ -12,17 +12,18 @@
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
   <nav class="navbar">
-      <div style="display:flex; align-items:center; gap:12px;">
-        <!-- Tombol hamburger (hanya muncul di HP) -->
+      <div style="display:flex; align-items:center; gap:10px;">
+        <!-- Tombol sidebar -->
         <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
         <a href="{{ url_for('landing') }}" class="nav-logo">
-          <div class="logo-icon">...</div>
+          <div class="logo-icon"><img src="{{url_for('static', filename='images/logo.png') }}" alt="Logo" onerror="this.parentElement.textContent='🛣️'"/></div>
           Weroad
           <span class="admin-badge">ADMIN</span>
         </a>
       </div>
       <div class="nav-right">
-        ...
+        <div class="nav-admin"><div class="nav-avatar admin" >🛡️</div> Administrator</div>
+        <a href="{{ url_for('admin_logout') }}" class="btn btn-ghost btn-sm">Keluar</a>
       </div>
     </nav>
 
@@ -133,12 +134,12 @@
 
   <script>
     function toggleSidebar() {
-      const sidebar = document.querySelector('.sidebar');
+      const sidebar = document.getElementById('adminsidebar');
       const overlay = document.getElementById('sidebarOverlay');
       
-      // Deteksi HP atau laptop
+      // Deteksi size halaman
       if (window.innerWidth <= 768) {
-        // HP: slide dari kiri
+        // slide dari kiri
         sidebar.classList.toggle('open');
         overlay.classList.toggle('active');
       } else {
@@ -148,7 +149,7 @@
     }
     
     function closeSidebar() {
-      const sidebar = document.querySelector('.sidebar');
+      const sidebar = document.getElementById('adminsidebar');
       const overlay = document.getElementById('sidebarOverlay');
       sidebar.classList.remove('open');
       overlay.classList.remove('active');
